@@ -1,0 +1,14 @@
+{
+  "name": "breakreach",
+  "description": "Breakreach for Claude Code: schedule and publish social media posts on 15 networks",
+  "owner": { "name": "Breakreach", "url": "https://www.breakreach.com" },
+  "plugins": [
+    {
+      "name": "breakreach",
+      "source": "./",
+      "description": "The Breakreach skill and MCP server: schedule, publish and manage posts on Instagram, TikTok, X, LinkedIn, YouTube and 10 more networks",
+      "category": "productivity",
+      "homepage": "https://www.breakreach.com/agents/claude-code"
+    }
+  ]
+}

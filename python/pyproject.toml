@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "breakreach"
+version = "0.1.0"
+description = "Official Python SDK for Breakreach: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit and 5 more networks with one API."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Breakreach" }]
+keywords = ["breakreach", "social media api", "social media scheduler", "instagram api", "tiktok api", "linkedin api", "schedule posts"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://www.breakreach.com/developers"
+Documentation = "https://www.breakreach.com/developers"
+"API reference" = "https://api.breakreach.com/v1/openapi.json"
+Source = "https://github.com/samuelrondot/breakreach-sdk"
+Issues = "https://github.com/samuelrondot/breakreach-sdk/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/breakreach"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/breakreach", "tests", "README.md", "LICENSE"]
