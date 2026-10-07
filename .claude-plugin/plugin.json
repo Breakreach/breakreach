@@ -5,7 +5,7 @@
   "description": "Schedule, publish and manage social media posts on Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon and WordPress: the Breakreach skill plus its hosted MCP server (OAuth sign-in).",
   "author": { "name": "Breakreach", "url": "https://www.breakreach.com" },
   "homepage": "https://www.breakreach.com/agents/claude-code",
-  "repository": "https://github.com/samuelrondot/breakreach-sdk",
+  "repository": "https://github.com/breakreach/breakreach",
   "license": "MIT",
   "keywords": ["social media", "scheduling", "instagram", "tiktok", "linkedin", "mcp"],
   "skills": ["./skills/"],

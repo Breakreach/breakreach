@@ -28,8 +28,8 @@ dependencies = []
 Homepage = "https://www.breakreach.com/developers"
 Documentation = "https://www.breakreach.com/developers"
 "API reference" = "https://api.breakreach.com/v1/openapi.json"
-Source = "https://github.com/samuelrondot/breakreach-sdk"
-Issues = "https://github.com/samuelrondot/breakreach-sdk/issues"
+Source = "https://github.com/breakreach/breakreach"
+Issues = "https://github.com/breakreach/breakreach/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/breakreach"]

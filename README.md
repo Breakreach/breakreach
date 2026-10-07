@@ -6,8 +6,8 @@ Everything to use [Breakreach](https://www.breakreach.com) from code and from AI
 | --- | --- | --- |
 | [TypeScript SDK + CLI](typescript) | `npm install breakreach` · `npx breakreach post …` | Node 18+, no dependencies |
 | [Python SDK](python) | `pip install breakreach` | Python 3.9+, standard library only |
-| [Agent skill](skills/breakreach/SKILL.md) | `npx skills add samuelrondot/breakreach-sdk` | Claude Code, Codex, Cursor, OpenClaw and other agents that read `SKILL.md` |
-| Claude Code plugin (skill + MCP server) | `claude plugin marketplace add samuelrondot/breakreach-sdk` then `claude plugin install breakreach@breakreach` | |
+| [Agent skill](skills/breakreach/SKILL.md) | `npx skills add breakreach/breakreach` | Claude Code, Codex, Cursor, OpenClaw and other agents that read `SKILL.md` |
+| Claude Code plugin (skill + MCP server) | `claude plugin marketplace add breakreach/breakreach` then `claude plugin install breakreach@breakreach` | |
 | MCP server | `https://api.breakreach.com/mcp` | hosted, OAuth; [setup per client](https://www.breakreach.com/agents) |
 
 The SDKs are generated from the [OpenAPI spec](https://api.breakreach.com/v1/openapi.json) the API serves (a copy is in [openapi.json](openapi.json)), so every endpoint has a typed method. Both retry network errors and restarts with an `Idempotency-Key` on each POST: a retry never publishes a post twice.

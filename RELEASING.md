@@ -8,7 +8,7 @@ Names used below (change them everywhere with one search and replace if you pick
 | --- | --- |
 | npm package (SDK + `breakreach` command) | `breakreach` |
 | PyPI package | `breakreach` |
-| Public GitHub repo (SDKs, skill, Claude Code plugin) | `samuelrondot/breakreach-sdk` |
+| Public GitHub repo (SDKs, skill, Claude Code plugin) | `breakreach/breakreach` |
 
 ## 0. Before each release
 
@@ -22,21 +22,21 @@ Bump the version in `devkit/typescript/package.json` and `src/core.ts` (VERSION)
 
 ## 1. The public GitHub repo
 
-First time:
+First time: create the GitHub organization `breakreach` (github.com → your avatar → Your organizations → New organization, Free plan, name `breakreach`), then the repo:
 
 ```bash
-gh repo create samuelrondot/breakreach-sdk --public --description "Breakreach SDKs (TypeScript, Python), CLI and agent skill: schedule social media posts on 15 networks"
+gh repo create breakreach/breakreach --public --description "Breakreach SDKs (TypeScript, Python), CLI and agent skill: schedule social media posts on 15 networks"
 ```
 
 Every release (copies `devkit/` with its history to the repo's main branch):
 
 ```bash
 git subtree split --prefix=devkit -b devkit-public
-git push https://github.com/samuelrondot/breakreach-sdk.git devkit-public:main
+git push https://github.com/breakreach/breakreach.git devkit-public:main
 git branch -D devkit-public
 ```
 
-Once it's public, these work: `npx skills add samuelrondot/breakreach-sdk`, `claude plugin marketplace add samuelrondot/breakreach-sdk`.
+Once it's public, these work: `npx skills add breakreach/breakreach`, `claude plugin marketplace add breakreach/breakreach`.
 
 ## 2. npm
 
