@@ -178,6 +178,166 @@ export interface CommentDmEvent {
   sentAt: string | null;
 }
 
+export interface DmTrigger {
+  /**
+   * keyword = a DM containing a keyword; any_message = any DM (welcome or away reply); story_mention = someone mentions the account in their story (Instagram); story_reply = a reply to one of its stories, optionally with keywords (Instagram); ref = someone opens ig.me/m/<username>?ref=<ref> or m.me/<page id>?ref=<ref> and writes
+   */
+  type: "keyword" | "any_message" | "story_mention" | "story_reply" | "ref";
+  /**
+   * keyword (required) and story_reply (optional); case and accents ignored
+   */
+  keywords?: string[];
+  match?: "contains" | "exact";
+  ref?: string | null;
+}
+
+/**
+ * One step of a flow. A message with choices, a condition and a handoff must be the last step of their list; what follows goes inside their branches. Up to 40 steps, branches 6 levels deep.
+ */
+export interface DmStep {
+  /**
+   * Kept across edits so people in the flow carry on; generated when omitted
+   */
+  id?: string;
+  type: "message" | "wait" | "condition" | "handoff";
+  /**
+   * message: up to 1000 bytes (640 characters with a button). {username} = their @handle on Instagram, first name on Messenger; {first_name}
+   */
+  text?: string;
+  /**
+   * message: a link button; clicks are counted (the link goes through api.breakreach.com/l/...)
+   */
+  button?: {
+    title?: string;
+    url?: string;
+  } | null;
+  /**
+   * message: quick-reply choices, each with its own steps. Not with a button
+   */
+  choices?: Array<{
+    id?: string;
+    label?: string;
+    steps?: DmStep[];
+  }>;
+  /**
+   * message with choices: a typed answer that isn't a choice, or no answer within afterMinutes
+   */
+  otherwise?: {
+    afterMinutes?: number;
+    steps?: DmStep[];
+  } | null;
+  /**
+   * wait
+   */
+  minutes?: number;
+  /**
+   * condition: a reply, a reply containing keywords, a click on an earlier link button (each waited for up to withinMinutes), or whether they follow the account (Instagram, checked at once)
+   */
+  check?: "replied" | "keyword" | "clicked" | "follows";
+  keywords?: string[];
+  match?: "contains" | "exact";
+  withinMinutes?: number;
+  yes?: DmStep[];
+  no?: DmStep[];
+  /**
+   * handoff: shown in the Inbox
+   */
+  note?: string;
+}
+
+export interface DmAutomation {
+  id?: string;
+  accountId?: string;
+  platform?: "instagram" | "facebook";
+  account?: {
+    displayName?: string;
+    avatarUrl?: string | null;
+  };
+  name?: string;
+  trigger?: DmTrigger;
+  /**
+   * For a ref trigger: the link to share (link in bio, QR code, ad)
+   */
+  refLink?: string | null;
+  steps?: DmStep[];
+  reentry?: "once" | "always";
+  cooldownHours?: number;
+  active?: boolean;
+  stats?: {
+    started?: number;
+    completed?: number;
+    handedOff?: number;
+    clicks?: number;
+    failed?: number;
+  };
+  lastTriggeredAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DmAutomationInput {
+  /**
+   * Instagram account or Facebook Page id from /v1/accounts (create only)
+   */
+  accountId?: string;
+  name?: string;
+  trigger?: DmTrigger;
+  /**
+   * Required on create. On update, the whole list
+   */
+  steps?: DmStep[];
+  /**
+   * once = a person goes through it once; always = each time they trigger it, at most once per cooldownHours
+   */
+  reentry?: "once" | "always";
+  cooldownHours?: number;
+  active?: boolean;
+  workspace?: string;
+}
+
+export interface DmAutomationRun {
+  id?: string;
+  automationId?: string;
+  status?: "running" | "waiting" | "completed" | "handed_off" | "stopped" | "window_closed" | "failed";
+  contact?: {
+    /**
+     * Instagram-scoped or Page-scoped id
+     */
+    id?: string;
+    username?: string | null;
+    name?: string | null;
+  };
+  trigger?: {
+    type?: string;
+    text?: string | null;
+    ref?: string | null;
+  };
+  stepId?: string | null;
+  waiting?: {
+    kind?: "timer" | "choice" | "reply" | "click";
+    stepId?: string;
+    until?: string;
+  } | null;
+  clicks?: number;
+  log?: Array<{
+    at?: string;
+    /**
+     * trigger, sent, choice, reply, click, branch, wait, waited, handoff, end, error
+     */
+    kind?: string;
+    stepId?: string | null;
+    text?: string | null;
+    detail?: string | null;
+  }>;
+  /**
+   * done, handoff, human_replied (someone answered by hand), window (Meta's 24-hour window closed), paused, deleted, flow_changed, stopped_by_team, send, account
+   */
+  endReason?: string | null;
+  error?: string | null;
+  createdAt?: string;
+  endedAt?: string | null;
+}
+
 export interface Error {
   /**
    * Human-readable reason
@@ -686,6 +846,57 @@ export interface ListCommentDmEventsResponse {
   events: CommentDmEvent[];
 }
 
+/**
+ * Query parameters of listDmAutomations
+ */
+export interface ListDmAutomationsQuery {
+  accountId?: string;
+  workspace?: string;
+}
+
+/**
+ * Response of listDmAutomations
+ */
+export interface ListDmAutomationsResponse {
+  automations?: DmAutomation[];
+}
+
+/**
+ * Response of createDmAutomation
+ */
+export interface CreateDmAutomationResponse {
+  automation?: DmAutomation;
+}
+
+/**
+ * Response of updateDmAutomation
+ */
+export interface UpdateDmAutomationResponse {
+  automation?: DmAutomation;
+}
+
+/**
+ * Query parameters of deleteDmAutomation
+ */
+export interface DeleteDmAutomationQuery {
+  workspace?: string;
+}
+
+/**
+ * Query parameters of listDmAutomationRuns
+ */
+export interface ListDmAutomationRunsQuery {
+  limit?: number;
+  workspace?: string;
+}
+
+/**
+ * Response of listDmAutomationRuns
+ */
+export interface ListDmAutomationRunsResponse {
+  runs?: DmAutomationRun[];
+}
+
 /** One method per operation of the API, in the order of the spec */
 export abstract class Operations extends Core {
   /**
@@ -971,5 +1182,50 @@ export abstract class Operations extends Core {
    */
   listCommentDmEvents(id: string, query?: ListCommentDmEventsQuery, options?: RequestOptions): Promise<ListCommentDmEventsResponse> {
     return this.request("GET", `/v1/comment-dm-rules/${encodeURIComponent(id)}/events`, { query, workspace: "query", options });
+  }
+
+  /**
+   * List DM automations. `GET /v1/dm-automations`
+   *
+   * DM automations: when someone DMs a keyword, mentions the account in their story, replies to a story or opens a ref link, Breakreach answers in Instagram Direct (or Messenger for a Facebook Page) and walks a flow of messages, waits, conditions and handoffs for that person. Replies only go out within Meta's 24-hour window after the person's last message; a person is in one flow at a time, and someone answering by hand stops it.
+   */
+  listDmAutomations(query?: ListDmAutomationsQuery, options?: RequestOptions): Promise<ListDmAutomationsResponse> {
+    return this.request("GET", `/v1/dm-automations`, { query, workspace: "query", options });
+  }
+
+  /**
+   * Create a DM automation. `POST /v1/dm-automations`
+   *
+   * Subscribes the account to Meta's message webhooks and starts answering. Requires an active plan or trial on the workspace.
+   */
+  createDmAutomation(body: DmAutomationInput, options?: RequestOptions): Promise<CreateDmAutomationResponse> {
+    return this.request("POST", `/v1/dm-automations`, { body, workspace: "body", options });
+  }
+
+  /**
+   * Update a DM automation. `PATCH /v1/dm-automations/{id}`
+   *
+   * Only the fields given change; steps replaces the whole flow (keep the ids of unchanged steps so people in the flow carry on). active false pauses it and stops the people in it.
+   */
+  updateDmAutomation(id: string, body: DmAutomationInput, options?: RequestOptions): Promise<UpdateDmAutomationResponse> {
+    return this.request("PATCH", `/v1/dm-automations/${encodeURIComponent(id)}`, { body, workspace: "body", options });
+  }
+
+  /**
+   * Delete a DM automation. `DELETE /v1/dm-automations/{id}`
+   *
+   * Deletes the automation with its runs; people in the flow stop.
+   */
+  deleteDmAutomation(id: string, query?: DeleteDmAutomationQuery, options?: RequestOptions): Promise<JsonObject> {
+    return this.request("DELETE", `/v1/dm-automations/${encodeURIComponent(id)}`, { query, workspace: "query", options });
+  }
+
+  /**
+   * Runs of a DM automation. `GET /v1/dm-automations/{id}/runs`
+   *
+   * Each person who went through it, newest first, kept 90 days: every step sent, choices tapped, clicks, and how it ended. Webhooks subscribed to dm_automation.started, dm_automation.handoff, dm_automation.finished and dm_automation.failed get the same events as they happen.
+   */
+  listDmAutomationRuns(id: string, query?: ListDmAutomationRunsQuery, options?: RequestOptions): Promise<ListDmAutomationRunsResponse> {
+    return this.request("GET", `/v1/dm-automations/${encodeURIComponent(id)}/runs`, { query, workspace: "query", options });
   }
 }

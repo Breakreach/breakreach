@@ -119,6 +119,11 @@ except BreakreachConnectionError as err:
 | `update_comment_dm_rule()` | `PATCH /v1/comment-dm-rules/{id}` | Update a Comment to DM rule |
 | `delete_comment_dm_rule()` | `DELETE /v1/comment-dm-rules/{id}` | Delete a Comment to DM rule |
 | `list_comment_dm_events()` | `GET /v1/comment-dm-rules/{id}/events` | Activity of a Comment to DM rule |
+| `list_dm_automations()` | `GET /v1/dm-automations` | List DM automations |
+| `create_dm_automation()` | `POST /v1/dm-automations` | Create a DM automation |
+| `update_dm_automation()` | `PATCH /v1/dm-automations/{id}` | Update a DM automation |
+| `delete_dm_automation()` | `DELETE /v1/dm-automations/{id}` | Delete a DM automation |
+| `list_dm_automation_runs()` | `GET /v1/dm-automations/{id}/runs` | Runs of a DM automation |
 <!-- methods:end -->
 
 ## Also

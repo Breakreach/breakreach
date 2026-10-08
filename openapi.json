@@ -575,6 +575,485 @@
           }
         }
       },
+      "DmTrigger": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "keyword",
+              "any_message",
+              "story_mention",
+              "story_reply",
+              "ref"
+            ],
+            "description": "keyword = a DM containing a keyword; any_message = any DM (welcome or away reply); story_mention = someone mentions the account in their story (Instagram); story_reply = a reply to one of its stories, optionally with keywords (Instagram); ref = someone opens ig.me/m/<username>?ref=<ref> or m.me/<page id>?ref=<ref> and writes"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 60
+            },
+            "maxItems": 20,
+            "description": "keyword (required) and story_reply (optional); case and accents ignored"
+          },
+          "match": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "exact"
+            ],
+            "default": "contains"
+          },
+          "ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[A-Za-z0-9_=-]{1,60}$"
+          }
+        }
+      },
+      "DmStep": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "description": "One step of a flow. A message with choices, a condition and a handoff must be the last step of their list; what follows goes inside their branches. Up to 40 steps, branches 6 levels deep.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Kept across edits so people in the flow carry on; generated when omitted"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "message",
+              "wait",
+              "condition",
+              "handoff"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "message: up to 1000 bytes (640 characters with a button). {username} = their @handle on Instagram, first name on Messenger; {first_name}"
+          },
+          "button": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "title": {
+                "type": "string",
+                "maxLength": 20
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "description": "message: a link button; clicks are counted (the link goes through api.breakreach.com/l/...)"
+          },
+          "choices": {
+            "type": "array",
+            "maxItems": 13,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "maxLength": 20
+                },
+                "steps": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DmStep"
+                  }
+                }
+              }
+            },
+            "description": "message: quick-reply choices, each with its own steps. Not with a button"
+          },
+          "otherwise": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "afterMinutes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1380
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DmStep"
+                }
+              }
+            },
+            "description": "message with choices: a typed answer that isn't a choice, or no answer within afterMinutes"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1380,
+            "description": "wait"
+          },
+          "check": {
+            "type": "string",
+            "enum": [
+              "replied",
+              "keyword",
+              "clicked",
+              "follows"
+            ],
+            "description": "condition: a reply, a reply containing keywords, a click on an earlier link button (each waited for up to withinMinutes), or whether they follow the account (Instagram, checked at once)"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "match": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "exact"
+            ]
+          },
+          "withinMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1380
+          },
+          "yes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DmStep"
+            }
+          },
+          "no": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DmStep"
+            }
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "handoff: shown in the Inbox"
+          }
+        }
+      },
+      "DmAutomation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "instagram",
+              "facebook"
+            ]
+          },
+          "account": {
+            "type": "object",
+            "properties": {
+              "displayName": {
+                "type": "string"
+              },
+              "avatarUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/DmTrigger"
+          },
+          "refLink": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "For a ref trigger: the link to share (link in bio, QR code, ad)"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DmStep"
+            }
+          },
+          "reentry": {
+            "type": "string",
+            "enum": [
+              "once",
+              "always"
+            ]
+          },
+          "cooldownHours": {
+            "type": "integer"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "stats": {
+            "type": "object",
+            "properties": {
+              "started": {
+                "type": "integer"
+              },
+              "completed": {
+                "type": "integer"
+              },
+              "handedOff": {
+                "type": "integer"
+              },
+              "clicks": {
+                "type": "integer"
+              },
+              "failed": {
+                "type": "integer"
+              }
+            }
+          },
+          "lastTriggeredAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DmAutomationInput": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Instagram account or Facebook Page id from /v1/accounts (create only)"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/DmTrigger"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DmStep"
+            },
+            "description": "Required on create. On update, the whole list"
+          },
+          "reentry": {
+            "type": "string",
+            "enum": [
+              "once",
+              "always"
+            ],
+            "default": "once",
+            "description": "once = a person goes through it once; always = each time they trigger it, at most once per cooldownHours"
+          },
+          "cooldownHours": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 720,
+            "default": 24
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          },
+          "workspace": {
+            "type": "string"
+          }
+        }
+      },
+      "DmAutomationRun": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "automationId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running",
+              "waiting",
+              "completed",
+              "handed_off",
+              "stopped",
+              "window_closed",
+              "failed"
+            ]
+          },
+          "contact": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Instagram-scoped or Page-scoped id"
+              },
+              "username": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ref": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "stepId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "waiting": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "timer",
+                  "choice",
+                  "reply",
+                  "click"
+                ]
+              },
+              "stepId": {
+                "type": "string"
+              },
+              "until": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "clicks": {
+            "type": "integer"
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "kind": {
+                  "type": "string",
+                  "description": "trigger, sent, choice, reply, click, branch, wait, waited, handoff, end, error"
+                },
+                "stepId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "detail": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "endReason": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "done, handoff, human_replied (someone answered by hand), window (Meta's 24-hour window closed), paused, deleted, flow_changed, stopped_by_team, send, account"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "Error": {
         "type": "object",
         "required": [
@@ -3186,6 +3665,331 @@
           },
           "404": {
             "description": "Rule or workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dm-automations": {
+      "get": {
+        "summary": "List DM automations",
+        "description": "DM automations: when someone DMs a keyword, mentions the account in their story, replies to a story or opens a ref link, Breakreach answers in Instagram Direct (or Messenger for a Facebook Page) and walks a flow of messages, waits, conditions and handoffs for that person. Replies only go out within Meta's 24-hour window after the person's last message; a person is in one flow at a time, and someone answering by hand stops it.",
+        "operationId": "listDmAutomations",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workspace",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "automations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DmAutomation"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a DM automation",
+        "description": "Subscribes the account to Meta's message webhooks and starts answering. Requires an active plan or trial on the workspace.",
+        "operationId": "createDmAutomation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DmAutomationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "automation": {
+                      "$ref": "#/components/schemas/DmAutomation"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid trigger or step (the message says which), or not an Instagram account or a Facebook Page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Account or workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Meta refused to subscribe the account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dm-automations/{id}": {
+      "patch": {
+        "summary": "Update a DM automation",
+        "description": "Only the fields given change; steps replaces the whole flow (keep the ids of unchanged steps so people in the flow carry on). active false pauses it and stops the people in it.",
+        "operationId": "updateDmAutomation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DmAutomationInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "automation": {
+                      "$ref": "#/components/schemas/DmAutomation"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Automation or workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a DM automation",
+        "description": "Deletes the automation with its runs; people in the flow stop.",
+        "operationId": "deleteDmAutomation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workspace",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Automation or workspace not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dm-automations/{id}/runs": {
+      "get": {
+        "summary": "Runs of a DM automation",
+        "description": "Each person who went through it, newest first, kept 90 days: every step sent, choices tapped, clicks, and how it ended. Webhooks subscribed to dm_automation.started, dm_automation.handoff, dm_automation.finished and dm_automation.failed get the same events as they happen.",
+        "operationId": "listDmAutomationRuns",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "workspace",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DmAutomationRun"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Automation or workspace not found",
             "content": {
               "application/json": {
                 "schema": {

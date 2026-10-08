@@ -133,6 +133,11 @@ npx breakreach upload ./clip.mp4
 | `updateCommentDmRule()` | `PATCH /v1/comment-dm-rules/{id}` | Update a Comment to DM rule |
 | `deleteCommentDmRule()` | `DELETE /v1/comment-dm-rules/{id}` | Delete a Comment to DM rule |
 | `listCommentDmEvents()` | `GET /v1/comment-dm-rules/{id}/events` | Activity of a Comment to DM rule |
+| `listDmAutomations()` | `GET /v1/dm-automations` | List DM automations |
+| `createDmAutomation()` | `POST /v1/dm-automations` | Create a DM automation |
+| `updateDmAutomation()` | `PATCH /v1/dm-automations/{id}` | Update a DM automation |
+| `deleteDmAutomation()` | `DELETE /v1/dm-automations/{id}` | Delete a DM automation |
+| `listDmAutomationRuns()` | `GET /v1/dm-automations/{id}/runs` | Runs of a DM automation |
 <!-- methods:end -->
 
 ## Also

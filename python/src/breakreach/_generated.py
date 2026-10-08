@@ -155,6 +155,150 @@ class CommentDmEvent(TypedDict, total=False):
     sentAt: Optional[str]
 
 
+class DmTrigger(TypedDict, total=False):
+    type: Literal["keyword", "any_message", "story_mention", "story_reply", "ref"]
+    """keyword = a DM containing a keyword; any_message = any DM (welcome or away reply); story_mention = someone mentions the account in their story (Instagram); story_reply = a reply to one of its stories, optionally with keywords (Instagram); ref = someone opens ig.me/m/<username>?ref=<ref> or m.me/<page id>?ref=<ref> and writes"""
+    keywords: List[str]
+    """keyword (required) and story_reply (optional); case and accents ignored"""
+    match: Literal["contains", "exact"]
+    ref: Optional[str]
+
+
+class DmStepButton(TypedDict, total=False):
+    """message: a link button; clicks are counted (the link goes through api.breakreach.com/l/...)"""
+    title: str
+    url: str
+
+
+class DmStepChoicesItem(TypedDict, total=False):
+    id: str
+    label: str
+    steps: List[DmStep]
+
+
+class DmStepOtherwise(TypedDict, total=False):
+    """message with choices: a typed answer that isn't a choice, or no answer within afterMinutes"""
+    afterMinutes: int
+    steps: List[DmStep]
+
+
+class DmStep(TypedDict, total=False):
+    """One step of a flow. A message with choices, a condition and a handoff must be the last step of their list; what follows goes inside their branches. Up to 40 steps, branches 6 levels deep."""
+    id: str
+    """Kept across edits so people in the flow carry on; generated when omitted"""
+    type: Literal["message", "wait", "condition", "handoff"]
+    text: str
+    """message: up to 1000 bytes (640 characters with a button). {username} = their @handle on Instagram, first name on Messenger; {first_name}"""
+    button: Optional[DmStepButton]
+    """message: a link button; clicks are counted (the link goes through api.breakreach.com/l/...)"""
+    choices: List[DmStepChoicesItem]
+    """message: quick-reply choices, each with its own steps. Not with a button"""
+    otherwise: Optional[DmStepOtherwise]
+    """message with choices: a typed answer that isn't a choice, or no answer within afterMinutes"""
+    minutes: int
+    """wait"""
+    check: Literal["replied", "keyword", "clicked", "follows"]
+    """condition: a reply, a reply containing keywords, a click on an earlier link button (each waited for up to withinMinutes), or whether they follow the account (Instagram, checked at once)"""
+    keywords: List[str]
+    match: Literal["contains", "exact"]
+    withinMinutes: int
+    yes: List[DmStep]
+    no: List[DmStep]
+    note: str
+    """handoff: shown in the Inbox"""
+
+
+class DmAutomationAccount(TypedDict, total=False):
+    displayName: str
+    avatarUrl: Optional[str]
+
+
+class DmAutomationStats(TypedDict, total=False):
+    started: int
+    completed: int
+    handedOff: int
+    clicks: int
+    failed: int
+
+
+class DmAutomation(TypedDict, total=False):
+    id: str
+    accountId: str
+    platform: Literal["instagram", "facebook"]
+    account: DmAutomationAccount
+    name: str
+    trigger: DmTrigger
+    refLink: Optional[str]
+    """For a ref trigger: the link to share (link in bio, QR code, ad)"""
+    steps: List[DmStep]
+    reentry: Literal["once", "always"]
+    cooldownHours: int
+    active: bool
+    stats: DmAutomationStats
+    lastTriggeredAt: Optional[str]
+    createdAt: str
+    updatedAt: str
+
+
+class DmAutomationInput(TypedDict, total=False):
+    accountId: str
+    """Instagram account or Facebook Page id from /v1/accounts (create only)"""
+    name: str
+    trigger: DmTrigger
+    steps: List[DmStep]
+    """Required on create. On update, the whole list"""
+    reentry: Literal["once", "always"]
+    """once = a person goes through it once; always = each time they trigger it, at most once per cooldownHours"""
+    cooldownHours: int
+    active: bool
+    workspace: str
+
+
+class DmAutomationRunContact(TypedDict, total=False):
+    id: str
+    """Instagram-scoped or Page-scoped id"""
+    username: Optional[str]
+    name: Optional[str]
+
+
+class DmAutomationRunTrigger(TypedDict, total=False):
+    type: str
+    text: Optional[str]
+    ref: Optional[str]
+
+
+class DmAutomationRunWaiting(TypedDict, total=False):
+    kind: Literal["timer", "choice", "reply", "click"]
+    stepId: str
+    until: str
+
+
+class DmAutomationRunLogItem(TypedDict, total=False):
+    at: str
+    kind: str
+    """trigger, sent, choice, reply, click, branch, wait, waited, handoff, end, error"""
+    stepId: Optional[str]
+    text: Optional[str]
+    detail: Optional[str]
+
+
+class DmAutomationRun(TypedDict, total=False):
+    id: str
+    automationId: str
+    status: Literal["running", "waiting", "completed", "handed_off", "stopped", "window_closed", "failed"]
+    contact: DmAutomationRunContact
+    trigger: DmAutomationRunTrigger
+    stepId: Optional[str]
+    waiting: Optional[DmAutomationRunWaiting]
+    clicks: int
+    log: List[DmAutomationRunLogItem]
+    endReason: Optional[str]
+    """done, handoff, human_replied (someone answered by hand), window (Meta's 24-hour window closed), paused, deleted, flow_changed, stopped_by_team, send, account"""
+    error: Optional[str]
+    createdAt: str
+    endedAt: Optional[str]
+
+
 class Error(TypedDict, total=False):
     error: str
     """Human-readable reason"""
@@ -316,6 +460,26 @@ class UpdateCommentDmRuleResponse(TypedDict, total=False):
 class ListCommentDmEventsResponse(TypedDict, total=False):
     """Response of list_comment_dm_events"""
     events: List[CommentDmEvent]
+
+
+class ListDmAutomationsResponse(TypedDict, total=False):
+    """Response of list_dm_automations"""
+    automations: List[DmAutomation]
+
+
+class CreateDmAutomationResponse(TypedDict, total=False):
+    """Response of create_dm_automation"""
+    automation: DmAutomation
+
+
+class UpdateDmAutomationResponse(TypedDict, total=False):
+    """Response of update_dm_automation"""
+    automation: DmAutomation
+
+
+class ListDmAutomationRunsResponse(TypedDict, total=False):
+    """Response of list_dm_automation_runs"""
+    runs: List[DmAutomationRun]
 
 
 class Operations:
@@ -818,3 +982,87 @@ class Operations:
 
         Comments that matched the rule, newest first, kept 90 days: sent, failed (with the reason) or skipped. The same outcomes are pushed to webhooks subscribed to comment_dm.sent and comment_dm.failed."""
         return cast("ListCommentDmEventsResponse", self._request("GET", f"/v1/comment-dm-rules/{_quote(id)}/events", query={"limit": limit, "workspace": workspace}, workspace_in="query", timeout=timeout))
+
+    def list_dm_automations(
+        self,
+        *,
+        account_id: Union[str, NotGiven] = NOT_GIVEN,
+        workspace: Union[str, NotGiven] = NOT_GIVEN,
+        timeout: Optional[float] = None,
+    ) -> ListDmAutomationsResponse:
+        """List DM automations. ``GET /v1/dm-automations``.
+
+        DM automations: when someone DMs a keyword, mentions the account in their story, replies to a story or opens a ref link, Breakreach answers in Instagram Direct (or Messenger for a Facebook Page) and walks a flow of messages, waits, conditions and handoffs for that person. Replies only go out within Meta's 24-hour window after the person's last message; a person is in one flow at a time, and someone answering by hand stops it."""
+        return cast("ListDmAutomationsResponse", self._request("GET", "/v1/dm-automations", query={"accountId": account_id, "workspace": workspace}, workspace_in="query", timeout=timeout))
+
+    def create_dm_automation(
+        self,
+        *,
+        account_id: Union[str, NotGiven] = NOT_GIVEN,
+        name: Union[str, NotGiven] = NOT_GIVEN,
+        trigger: Union[DmTrigger, NotGiven] = NOT_GIVEN,
+        steps: Union[List[DmStep], NotGiven] = NOT_GIVEN,
+        reentry: Union[Literal["once", "always"], NotGiven] = NOT_GIVEN,
+        cooldown_hours: Union[int, NotGiven] = NOT_GIVEN,
+        active: Union[bool, NotGiven] = NOT_GIVEN,
+        workspace: Union[str, NotGiven] = NOT_GIVEN,
+        timeout: Optional[float] = None,
+    ) -> CreateDmAutomationResponse:
+        """Create a DM automation. ``POST /v1/dm-automations``.
+
+        Subscribes the account to Meta's message webhooks and starts answering. Requires an active plan or trial on the workspace.
+
+        Args:
+            account_id: Instagram account or Facebook Page id from /v1/accounts (create only)
+            steps: Required on create. On update, the whole list
+            reentry: once = a person goes through it once; always = each time they trigger it, at most once per cooldownHours"""
+        return cast("CreateDmAutomationResponse", self._request("POST", "/v1/dm-automations", body={"accountId": account_id, "name": name, "trigger": trigger, "steps": steps, "reentry": reentry, "cooldownHours": cooldown_hours, "active": active, "workspace": workspace}, workspace_in="body", timeout=timeout))
+
+    def update_dm_automation(
+        self,
+        id: str,
+        *,
+        account_id: Union[str, NotGiven] = NOT_GIVEN,
+        name: Union[str, NotGiven] = NOT_GIVEN,
+        trigger: Union[DmTrigger, NotGiven] = NOT_GIVEN,
+        steps: Union[List[DmStep], NotGiven] = NOT_GIVEN,
+        reentry: Union[Literal["once", "always"], NotGiven] = NOT_GIVEN,
+        cooldown_hours: Union[int, NotGiven] = NOT_GIVEN,
+        active: Union[bool, NotGiven] = NOT_GIVEN,
+        workspace: Union[str, NotGiven] = NOT_GIVEN,
+        timeout: Optional[float] = None,
+    ) -> UpdateDmAutomationResponse:
+        """Update a DM automation. ``PATCH /v1/dm-automations/{id}``.
+
+        Only the fields given change; steps replaces the whole flow (keep the ids of unchanged steps so people in the flow carry on). active false pauses it and stops the people in it.
+
+        Args:
+            account_id: Instagram account or Facebook Page id from /v1/accounts (create only)
+            steps: Required on create. On update, the whole list
+            reentry: once = a person goes through it once; always = each time they trigger it, at most once per cooldownHours"""
+        return cast("UpdateDmAutomationResponse", self._request("PATCH", f"/v1/dm-automations/{_quote(id)}", body={"accountId": account_id, "name": name, "trigger": trigger, "steps": steps, "reentry": reentry, "cooldownHours": cooldown_hours, "active": active, "workspace": workspace}, workspace_in="body", timeout=timeout))
+
+    def delete_dm_automation(
+        self,
+        id: str,
+        *,
+        workspace: Union[str, NotGiven] = NOT_GIVEN,
+        timeout: Optional[float] = None,
+    ) -> Dict[str, Any]:
+        """Delete a DM automation. ``DELETE /v1/dm-automations/{id}``.
+
+        Deletes the automation with its runs; people in the flow stop."""
+        return cast("Dict[str, Any]", self._request("DELETE", f"/v1/dm-automations/{_quote(id)}", query={"workspace": workspace}, workspace_in="query", timeout=timeout))
+
+    def list_dm_automation_runs(
+        self,
+        id: str,
+        *,
+        limit: Union[int, NotGiven] = NOT_GIVEN,
+        workspace: Union[str, NotGiven] = NOT_GIVEN,
+        timeout: Optional[float] = None,
+    ) -> ListDmAutomationRunsResponse:
+        """Runs of a DM automation. ``GET /v1/dm-automations/{id}/runs``.
+
+        Each person who went through it, newest first, kept 90 days: every step sent, choices tapped, clicks, and how it ended. Webhooks subscribed to dm_automation.started, dm_automation.handoff, dm_automation.finished and dm_automation.failed get the same events as they happen."""
+        return cast("ListDmAutomationRunsResponse", self._request("GET", f"/v1/dm-automations/{_quote(id)}/runs", query={"limit": limit, "workspace": workspace}, workspace_in="query", timeout=timeout))
