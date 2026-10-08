@@ -1,7 +1,7 @@
 {
   "name": "breakreach",
   "version": "0.1.0",
-  "description": "Official Breakreach SDK and CLI: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit and 5 more networks with one API.",
+  "description": "Official Breakreach SDK and CLI: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit and 9 more networks with one API.",
   "keywords": ["breakreach", "social media api", "social media scheduler", "instagram api", "tiktok api", "linkedin api", "x api", "schedule posts", "cli", "sdk"],
   "homepage": "https://www.breakreach.com/developers",
   "bugs": "https://github.com/breakreach/breakreach/issues",

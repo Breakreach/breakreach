@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "breakreach"
 version = "0.1.0"
-description = "Official Python SDK for Breakreach: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit and 5 more networks with one API."
+description = "Official Python SDK for Breakreach: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit and 9 more networks with one API."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
