@@ -34,7 +34,7 @@ class Post(TypedDict, total=False):
 
 class Account(TypedDict, total=False):
     id: str
-    platform: Literal["instagram", "tiktok", "x", "reddit", "linkedin", "youtube", "facebook", "threads", "bluesky", "pinterest", "telegram", "discord", "slack", "mastodon", "wordpress"]
+    platform: Literal["instagram", "tiktok", "x", "reddit", "linkedin", "youtube", "facebook", "threads", "bluesky", "pinterest", "telegram", "discord", "slack", "mastodon", "wordpress", "ghost", "devto", "hashnode", "tumblr"]
     displayName: str
     warning: str
     """Present when the account's authorization has expired, was revoked on the network's side, or expires soon (LinkedIn lasts about 60 days): the user must reconnect it in Breakreach settings"""
@@ -44,6 +44,22 @@ class Workspace(TypedDict, total=False):
     slug: str
     name: str
     timezone: str
+
+
+class ArticleSettings(TypedDict, total=False):
+    """Options for the blog networks (Dev.to, Hashnode, Ghost, Tumblr). On Dev.to, Hashnode and Ghost the first line of content is the title and the rest the body, in Markdown; the first photo is the cover"""
+    tags: List[str]
+    """Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr all"""
+    canonicalUrl: str
+    """Where the article was first published, when this is a copy (Dev.to, Hashnode, Ghost)"""
+    asDraft: bool
+    """Create it as an unpublished draft on the blog instead of publishing it"""
+    newsletter: str
+    """Ghost: also email the post with this newsletter (its slug, or "default" for the site's first active one)"""
+    emailSegment: Literal["all", "status:free", "status:-free"]
+    """Ghost newsletter: who gets the email (default all members)"""
+    aiDisclosure: Literal["no_ai", "some_ai", "fully_autonomous"]
+    """Dev.to: how much AI wrote the article (Dev.to asks API clients to say so accurately)"""
 
 
 class CreatedPost(TypedDict, total=False):
@@ -519,7 +535,7 @@ class Operations:
         self,
         *,
         workspace: Union[str, NotGiven] = NOT_GIVEN,
-        platforms: Union[List[Literal["instagram", "facebook", "threads", "tiktok", "linkedin", "youtube", "x", "pinterest", "bluesky", "reddit", "telegram", "discord", "slack", "mastodon", "wordpress"]], NotGiven] = NOT_GIVEN,
+        platforms: Union[List[Literal["instagram", "facebook", "threads", "tiktok", "linkedin", "youtube", "x", "pinterest", "bluesky", "reddit", "telegram", "discord", "slack", "mastodon", "wordpress", "ghost", "devto", "hashnode", "tumblr"]], NotGiven] = NOT_GIVEN,
         redirect_url: Union[str, NotGiven] = NOT_GIVEN,
         expires_in_hours: Union[int, NotGiven] = NOT_GIVEN,
         idempotency_key: Optional[str] = None,
@@ -600,6 +616,7 @@ class Operations:
         pinterest_link: Union[str, NotGiven] = NOT_GIVEN,
         reddit_subreddit: Union[str, NotGiven] = NOT_GIVEN,
         reddit_flair_text: Union[str, NotGiven] = NOT_GIVEN,
+        article_settings: Union[ArticleSettings, NotGiven] = NOT_GIVEN,
         tiktok_settings: Union[CreatePostTiktokSettings, NotGiven] = NOT_GIVEN,
         idempotency_key: Optional[str] = None,
         timeout: Optional[float] = None,
@@ -620,7 +637,7 @@ class Operations:
             pinterest_link: Destination URL of the pin (optional, http(s), up to 2,048 characters). The pin title is the first line of content
             reddit_subreddit: Subreddit without r/ — defaults to the user profile
             reddit_flair_text: Post flair name when the subreddit requires one"""
-        return cast("CreatePostResponse", self._request("POST", "/v1/posts", body={"content": content, "accountIds": account_ids, "scheduledAt": scheduled_at, "publishNow": publish_now, "useNextSlot": use_next_slot, "draft": draft, "media": media, "workspace": workspace, "pinterestBoardId": pinterest_board_id, "pinterestLink": pinterest_link, "redditSubreddit": reddit_subreddit, "redditFlairText": reddit_flair_text, "tiktokSettings": tiktok_settings}, idempotent=True, idempotency_key=idempotency_key, workspace_in="body", timeout=timeout))
+        return cast("CreatePostResponse", self._request("POST", "/v1/posts", body={"content": content, "accountIds": account_ids, "scheduledAt": scheduled_at, "publishNow": publish_now, "useNextSlot": use_next_slot, "draft": draft, "media": media, "workspace": workspace, "pinterestBoardId": pinterest_board_id, "pinterestLink": pinterest_link, "redditSubreddit": reddit_subreddit, "redditFlairText": reddit_flair_text, "articleSettings": article_settings, "tiktokSettings": tiktok_settings}, idempotent=True, idempotency_key=idempotency_key, workspace_in="body", timeout=timeout))
 
     def update_post(
         self,
@@ -638,6 +655,7 @@ class Operations:
         pinterest_link: Union[str, NotGiven] = NOT_GIVEN,
         reddit_subreddit: Union[str, NotGiven] = NOT_GIVEN,
         reddit_flair_text: Union[str, NotGiven] = NOT_GIVEN,
+        article_settings: Union[ArticleSettings, NotGiven] = NOT_GIVEN,
         timeout: Optional[float] = None,
     ) -> UpdatePostResponse:
         """Edit, schedule or move back to drafts. ``PATCH /v1/posts/{id}``.
@@ -650,7 +668,7 @@ class Operations:
             scheduled_at: ISO datetime in the workspace timezone, e.g. 2026-09-20T11:00:00
             draft: true moves the post back to drafts
             workspace: Workspace slug (optional)"""
-        return cast("UpdatePostResponse", self._request("PATCH", f"/v1/posts/{_quote(id)}", body={"content": content, "accountIds": account_ids, "media": media, "scheduledAt": scheduled_at, "publishNow": publish_now, "useNextSlot": use_next_slot, "draft": draft, "workspace": workspace, "pinterestBoardId": pinterest_board_id, "pinterestLink": pinterest_link, "redditSubreddit": reddit_subreddit, "redditFlairText": reddit_flair_text}, workspace_in="body", timeout=timeout))
+        return cast("UpdatePostResponse", self._request("PATCH", f"/v1/posts/{_quote(id)}", body={"content": content, "accountIds": account_ids, "media": media, "scheduledAt": scheduled_at, "publishNow": publish_now, "useNextSlot": use_next_slot, "draft": draft, "workspace": workspace, "pinterestBoardId": pinterest_board_id, "pinterestLink": pinterest_link, "redditSubreddit": reddit_subreddit, "redditFlairText": reddit_flair_text, "articleSettings": article_settings}, workspace_in="body", timeout=timeout))
 
     def delete_post(
         self,

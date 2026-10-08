@@ -3,7 +3,7 @@
   "info": {
     "title": "Breakreach API",
     "version": "1.1.0",
-    "description": "Publish and schedule social media posts across Instagram, TikTok, X (Twitter), Reddit, LinkedIn, YouTube, Facebook, Threads, Bluesky, Pinterest, Telegram, Discord, Slack, Mastodon and WordPress with one request shape.\n\nAuthenticate with an API key (create one in the Breakreach dashboard under Settings → API & MCP) sent as a Bearer token. Errors answer with an HTTP status and a JSON body { \"error\": \"<reason>\" }.\n\nEvery POST accepts an Idempotency-Key header: any unique string up to 255 characters, a UUID for instance. Retrying with the same key and the same body within 24 hours returns the first response, marked Idempotent-Replayed: true, instead of creating a second post. The same key with a different body answers 422, and 409 while the first request is still running. Errors are not kept, so a fixed request can reuse its key. Keys belong to the API key that sent them.\n\nAI agents can use the same capabilities through the hosted MCP server at https://api.breakreach.com/mcp (OAuth 2.1)."
+    "description": "Publish and schedule social media posts across Instagram, TikTok, X (Twitter), Reddit, LinkedIn, YouTube, Facebook, Threads, Bluesky, Pinterest, Telegram, Discord, Slack, Mastodon, WordPress, Ghost, Dev.to, Hashnode and Tumblr with one request shape.\n\nAuthenticate with an API key (create one in the Breakreach dashboard under Settings → API & MCP) sent as a Bearer token. Errors answer with an HTTP status and a JSON body { \"error\": \"<reason>\" }.\n\nEvery POST accepts an Idempotency-Key header: any unique string up to 255 characters, a UUID for instance. Retrying with the same key and the same body within 24 hours returns the first response, marked Idempotent-Replayed: true, instead of creating a second post. The same key with a different body answers 422, and 409 while the first request is still running. Errors are not kept, so a fixed request can reuse its key. Keys belong to the API key that sent them.\n\nAI agents can use the same capabilities through the hosted MCP server at https://api.breakreach.com/mcp (OAuth 2.1)."
   },
   "servers": [
     {
@@ -127,7 +127,11 @@
               "discord",
               "slack",
               "mastodon",
-              "wordpress"
+              "wordpress",
+              "ghost",
+              "devto",
+              "hashnode",
+              "tumblr"
             ]
           },
           "displayName": {
@@ -155,6 +159,50 @@
           },
           "timezone": {
             "type": "string"
+          }
+        }
+      },
+      "ArticleSettings": {
+        "type": "object",
+        "description": "Options for the blog networks (Dev.to, Hashnode, Ghost, Tumblr). On Dev.to, Hashnode and Ghost the first line of content is the title and the rest the body, in Markdown; the first photo is the cover",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr all"
+          },
+          "canonicalUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "Where the article was first published, when this is a copy (Dev.to, Hashnode, Ghost)"
+          },
+          "asDraft": {
+            "type": "boolean",
+            "description": "Create it as an unpublished draft on the blog instead of publishing it"
+          },
+          "newsletter": {
+            "type": "string",
+            "description": "Ghost: also email the post with this newsletter (its slug, or \"default\" for the site's first active one)"
+          },
+          "emailSegment": {
+            "type": "string",
+            "enum": [
+              "all",
+              "status:free",
+              "status:-free"
+            ],
+            "description": "Ghost newsletter: who gets the email (default all members)"
+          },
+          "aiDisclosure": {
+            "type": "string",
+            "enum": [
+              "no_ai",
+              "some_ai",
+              "fully_autonomous"
+            ],
+            "description": "Dev.to: how much AI wrote the article (Dev.to asks API clients to say so accurately)"
           }
         }
       },
@@ -1290,7 +1338,11 @@
                         "discord",
                         "slack",
                         "mastodon",
-                        "wordpress"
+                        "wordpress",
+                        "ghost",
+                        "devto",
+                        "hashnode",
+                        "tumblr"
                       ]
                     },
                     "description": "Networks offered on the page (default: all)"
@@ -1687,6 +1739,9 @@
                     "type": "string",
                     "description": "Post flair name when the subreddit requires one"
                   },
+                  "articleSettings": {
+                    "$ref": "#/components/schemas/ArticleSettings"
+                  },
                   "tiktokSettings": {
                     "type": "object",
                     "properties": {
@@ -1842,6 +1897,9 @@
                   },
                   "redditFlairText": {
                     "type": "string"
+                  },
+                  "articleSettings": {
+                    "$ref": "#/components/schemas/ArticleSettings"
                   }
                 }
               }

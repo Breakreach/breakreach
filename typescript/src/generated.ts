@@ -27,7 +27,7 @@ export interface Post {
 
 export interface Account {
   id: string;
-  platform: "instagram" | "tiktok" | "x" | "reddit" | "linkedin" | "youtube" | "facebook" | "threads" | "bluesky" | "pinterest" | "telegram" | "discord" | "slack" | "mastodon" | "wordpress";
+  platform: "instagram" | "tiktok" | "x" | "reddit" | "linkedin" | "youtube" | "facebook" | "threads" | "bluesky" | "pinterest" | "telegram" | "discord" | "slack" | "mastodon" | "wordpress" | "ghost" | "devto" | "hashnode" | "tumblr";
   displayName: string;
   /**
    * Present when the account's authorization has expired, was revoked on the network's side, or expires soon (LinkedIn lasts about 60 days): the user must reconnect it in Breakreach settings
@@ -39,6 +39,36 @@ export interface Workspace {
   slug: string;
   name: string;
   timezone: string;
+}
+
+/**
+ * Options for the blog networks (Dev.to, Hashnode, Ghost, Tumblr). On Dev.to, Hashnode and Ghost the first line of content is the title and the rest the body, in Markdown; the first photo is the cover
+ */
+export interface ArticleSettings {
+  /**
+   * Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr all
+   */
+  tags?: string[];
+  /**
+   * Where the article was first published, when this is a copy (Dev.to, Hashnode, Ghost)
+   */
+  canonicalUrl?: string;
+  /**
+   * Create it as an unpublished draft on the blog instead of publishing it
+   */
+  asDraft?: boolean;
+  /**
+   * Ghost: also email the post with this newsletter (its slug, or "default" for the site's first active one)
+   */
+  newsletter?: string;
+  /**
+   * Ghost newsletter: who gets the email (default all members)
+   */
+  emailSegment?: "all" | "status:free" | "status:-free";
+  /**
+   * Dev.to: how much AI wrote the article (Dev.to asks API clients to say so accurately)
+   */
+  aiDisclosure?: "no_ai" | "some_ai" | "fully_autonomous";
 }
 
 export interface CreatedPost {
@@ -391,7 +421,7 @@ export interface CreateConnectLinkBody {
   /**
    * Networks offered on the page (default: all)
    */
-  platforms?: Array<"instagram" | "facebook" | "threads" | "tiktok" | "linkedin" | "youtube" | "x" | "pinterest" | "bluesky" | "reddit" | "telegram" | "discord" | "slack" | "mastodon" | "wordpress">;
+  platforms?: Array<"instagram" | "facebook" | "threads" | "tiktok" | "linkedin" | "youtube" | "x" | "pinterest" | "bluesky" | "reddit" | "telegram" | "discord" | "slack" | "mastodon" | "wordpress" | "ghost" | "devto" | "hashnode" | "tumblr">;
   /**
    * Where the Done button sends them: https, or http on localhost
    */
@@ -503,6 +533,7 @@ export interface CreatePostBody {
    * Post flair name when the subreddit requires one
    */
   redditFlairText?: string;
+  articleSettings?: ArticleSettings;
   tiktokSettings?: {
     privacyLevel?: "PUBLIC_TO_EVERYONE" | "MUTUAL_FOLLOW_FRIENDS" | "FOLLOWER_OF_CREATOR" | "SELF_ONLY";
     disableComment?: boolean;
@@ -549,6 +580,7 @@ export interface UpdatePostBody {
   pinterestLink?: string;
   redditSubreddit?: string;
   redditFlairText?: string;
+  articleSettings?: ArticleSettings;
 }
 
 /**
