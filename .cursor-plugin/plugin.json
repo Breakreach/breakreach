@@ -1,0 +1,12 @@
+{
+  "name": "breakreach",
+  "version": "1.0.0",
+  "description": "Schedule, publish and manage social media posts on 19 networks: the Breakreach skill plus its hosted MCP server (OAuth).",
+  "author": { "name": "Breakreach", "url": "https://www.breakreach.com" },
+  "homepage": "https://www.breakreach.com/agents/cursor",
+  "repository": "https://github.com/breakreach/breakreach",
+  "license": "MIT",
+  "keywords": ["social-media", "scheduling", "instagram", "tiktok", "linkedin", "youtube", "x", "threads", "bluesky", "reddit", "mcp"],
+  "logo": "https://www.breakreach.com/logo-256.png",
+  "primaryColor": "#8B6CFF"
+}

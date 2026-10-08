@@ -1,0 +1,11 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.breakreach/breakreach",
+  "title": "Breakreach",
+  "description": "Schedule and publish posts on 19 social networks, answer comments and DMs, read post analytics.",
+  "version": "1.1.0",
+  "websiteUrl": "https://www.breakreach.com/agents",
+  "repository": { "url": "https://github.com/Breakreach/breakreach", "source": "github" },
+  "icons": [{ "src": "https://www.breakreach.com/logo-256.png", "mimeType": "image/png", "sizes": ["256x256"] }],
+  "remotes": [{ "type": "streamable-http", "url": "https://api.breakreach.com/mcp" }]
+}

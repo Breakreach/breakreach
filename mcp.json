@@ -1,0 +1,3 @@
+{
+  "breakreach": { "type": "http", "url": "https://api.breakreach.com/mcp" }
+}
