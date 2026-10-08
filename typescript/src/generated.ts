@@ -46,7 +46,7 @@ export interface Workspace {
  */
 export interface ArticleSettings {
   /**
-   * Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr all
+   * Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr up to 30
    */
   tags?: string[];
   /**

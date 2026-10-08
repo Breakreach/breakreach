@@ -49,7 +49,7 @@ class Workspace(TypedDict, total=False):
 class ArticleSettings(TypedDict, total=False):
     """Options for the blog networks (Dev.to, Hashnode, Ghost, Tumblr). On Dev.to, Hashnode and Ghost the first line of content is the title and the rest the body, in Markdown; the first photo is the cover"""
     tags: List[str]
-    """Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr all"""
+    """Dev.to keeps the first 4 (letters and digits), Hashnode 15, Ghost and Tumblr up to 30"""
     canonicalUrl: str
     """Where the article was first published, when this is a copy (Dev.to, Hashnode, Ghost)"""
     asDraft: bool

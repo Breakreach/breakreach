@@ -1,6 +1,6 @@
 {
   "name": "breakreach",
-  "description": "Breakreach for Claude Code: schedule and publish social media posts on 15 networks",
+  "description": "Breakreach for Claude Code: schedule and publish social media posts on 19 networks",
   "owner": { "name": "Breakreach", "url": "https://www.breakreach.com" },
   "plugins": [
     {

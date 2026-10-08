@@ -25,7 +25,7 @@ Bump the version in `devkit/typescript/package.json` and `src/core.ts` (VERSION)
 First time: create the GitHub organization `breakreach` (github.com → your avatar → Your organizations → New organization, Free plan, name `breakreach`), then the repo:
 
 ```bash
-gh repo create breakreach/breakreach --public --description "Breakreach SDKs (TypeScript, Python), CLI and agent skill: schedule social media posts on 15 networks"
+gh repo create breakreach/breakreach --public --description "Breakreach SDKs (TypeScript, Python), CLI and agent skill: schedule social media posts on 19 networks"
 ```
 
 Every release (copies `devkit/` with its history to the repo's main branch):

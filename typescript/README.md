@@ -1,6 +1,6 @@
 # Breakreach for TypeScript and the command line
 
-The official SDK and CLI for the [Breakreach API](https://www.breakreach.com/developers): schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon and WordPress with one request shape.
+The official SDK and CLI for the [Breakreach API](https://www.breakreach.com/developers): schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon, WordPress, Ghost, Dev.to, Hashnode and Tumblr with one request shape.
 
 - Typed from the [OpenAPI spec](https://api.breakreach.com/v1/openapi.json), one method per endpoint
 - Retries network errors, timeouts, 429s and restarts, with an `Idempotency-Key` on every POST so a retry never posts twice

@@ -1,6 +1,6 @@
 ---
 name: breakreach
-description: Schedule, publish and manage social media posts with Breakreach on Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon and WordPress, through its MCP server, REST API or CLI. Use when the user wants to post or schedule something on social media, cross-post to several networks, pick the next free posting slot, upload media for a post, check what is scheduled or why a post failed, read or answer comments and DMs, set up an Instagram comment-to-DM, or look at post analytics.
+description: Schedule, publish and manage social media posts with Breakreach on Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon, WordPress, Ghost, Dev.to, Hashnode and Tumblr, through its MCP server, REST API or CLI. Use when the user wants to post or schedule something on social media, cross-post to several networks, pick the next free posting slot, upload media for a post, check what is scheduled or why a post failed, read or answer comments and DMs, set up an Instagram comment-to-DM, or look at post analytics.
 license: MIT
 metadata:
   homepage: https://www.breakreach.com/agents
@@ -9,7 +9,7 @@ metadata:
 
 # Breakreach
 
-Breakreach publishes to 15 networks from one request. The accounts are connected once in Breakreach (or through a connect link), and every post names the accounts it goes to by id.
+Breakreach publishes to 19 networks from one request. The accounts are connected once in Breakreach (or through a connect link), and every post names the accounts it goes to by id.
 
 ## 1. Pick the interface
 

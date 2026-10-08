@@ -1,6 +1,6 @@
 # Breakreach developer and agent kit
 
-Everything to use [Breakreach](https://www.breakreach.com) from code and from AI agents: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon and WordPress.
+Everything to use [Breakreach](https://www.breakreach.com) from code and from AI agents: schedule and publish social media posts to Instagram, TikTok, X, LinkedIn, YouTube, Facebook, Threads, Pinterest, Bluesky, Reddit, Telegram, Discord, Slack, Mastodon, WordPress, Ghost, Dev.to, Hashnode and Tumblr.
 
 | | Install | |
 | --- | --- | --- |
